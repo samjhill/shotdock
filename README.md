@@ -1,5 +1,7 @@
 # ShotDock
 
+Detects an SD card and imports its video contents to your storage, then color corrects it.
+
 ## Setup
 
 ```
