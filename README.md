@@ -2,6 +2,7 @@
 
 1) detects when you insert an SD card
 1) imports its video contents to your storage
+1) removes dust / speckles from footage
 1) does color correction
 1) does image stabilization
 
