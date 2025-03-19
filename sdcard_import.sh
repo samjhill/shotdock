@@ -3,7 +3,7 @@
 echo "sdcard_import started"
 
 # Paths
-SOURCE="/Volumes/Untitled/PRIVATE/M4ROOT/CLIP"
+SOURCE="/Volumes/Untitled/PRIVATE/M4ROOT/CLIP/"
 STAGING="$HOME/Videos/staging/"
 DESTINATION="$HOME/Videos/Final/"
 LOGFILE="$HOME/sdcard_import.log"
