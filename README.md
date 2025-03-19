@@ -12,6 +12,8 @@ git clone git@github.com:samjhill/shotdock.git
 cd shotdock
 brew install ffmpeg
 brew install fswatch
+brew install parallel
+
 cp com.sdcard.monitor.plist ~/Library/LaunchAgents/com.sdcard.monitor.plist
 sudo cp sdcard_monitor.sh /usr/local/bin/
 sudo cp sdcard_import.sh /usr/local/bin/
