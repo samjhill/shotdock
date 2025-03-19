@@ -7,6 +7,8 @@
 ## Setup
 
 ```
+git clone git@github.com:samjhill/shotdock.git
+cd shotdock
 brew install ffmpeg
 brew install fswatch
 cp com.sdcard.monitor.plist ~/Library/LaunchAgents/com.sdcard.monitor.plist
