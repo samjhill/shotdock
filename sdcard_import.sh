@@ -40,7 +40,7 @@ END_TIME=$(date +%s)
 DURATION=$((END_TIME - START_TIME))
 log_and_notify "✅ Files copied successfully in $DURATION seconds."
 
-# Color correction with ffmpeg
+# Color correction
 START_TIME=$(date +%s)
 mkdir -p "$STAGING/color_corrected"
 for file in "$STAGING"/*.MP4; do
@@ -52,6 +52,18 @@ done
 END_TIME=$(date +%s)
 DURATION=$((END_TIME - START_TIME))
 log_and_notify "🎨 Color correction completed in $DURATION seconds."
+
+# Stabilize
+START_TIME=$(date +%s)
+mkdir -p "$STAGING/stabilized"
+for file in "$STAGING/color_corrected/"*.MP4; do
+    echo "stabilizing $file"
+    ffmpeg -i "$file" -vf vidstabdetect=shakiness=10:accuracy=15 -f null -
+    ffmpeg -i "$file" -vf removegrain=10,eq=brightness=0.02:saturation=1.1,vidstabtransform=smoothing=30:zoom=0.9 $STAGING/stabized/$(basename "$file").mp4
+done
+END_TIME=$(date +%s)
+DURATION=$((END_TIME - START_TIME))
+log_and_notify "🎥 Stabilization completed in $DURATION seconds."
 
 # Thumbnail Generation
 mkdir -p "$STAGING/thumbnails"
