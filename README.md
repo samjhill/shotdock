@@ -28,6 +28,7 @@ brew install parallel
 cp com.sdcard.monitor.plist ~/Library/LaunchAgents/com.sdcard.monitor.plist
 sudo cp sdcard_monitor.sh /usr/local/bin/
 sudo cp sdcard_import.sh /usr/local/bin/
+launchctl unload ~/Library/LaunchAgents/com.sdcard.monitor.plist
 launchctl load ~/Library/LaunchAgents/com.sdcard.monitor.plist
 ls /Volumes/Untitled/
 ```

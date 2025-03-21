@@ -1,10 +1,9 @@
 #!/bin/bash
 
 # Watch for SD card mounts
-fswatch -0 /Volumes | while read -d "" event
-do
+/opt/homebrew/bin/fswatch -o /Volumes/ | while read; do
     echo "sd card monitor: $event"
-    if [[ "$event" == "/Volumes/Untitled" ]]; then
+    # if [[ "$event" == "/Volumes/" ]]; then
         /usr/local/bin/sdcard_import.sh
-    fi
+    # fi
 done

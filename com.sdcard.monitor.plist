@@ -5,9 +5,15 @@
     <key>Label</key>
     <string>com.sdcard.monitor</string>
 
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    </dict>
+
     <key>ProgramArguments</key>
     <array>
-        <string>/path/to/your/script.sh</string>
+        <string>/usr/local/bin/sdcard_monitor.sh</string>
     </array>
 
     <key>RunAtLoad</key>

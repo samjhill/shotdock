@@ -7,7 +7,7 @@ TIMESTAMP=$(date +%s)
 SOURCE="/Volumes/Untitled/PRIVATE/M4ROOT/CLIP/"
 STAGING="$HOME/Videos/$TIMESTAMP/staging/"
 DESTINATION="$HOME/Videos/Final/"
-LOGFILE="$HOME/sdcard_import.log"
+LOGFILE="$HOME/Videos/$TIMESTAMP/sdcard_import.log"
 
 # Send macOS Notification
 send_notification() {
