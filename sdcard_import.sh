@@ -31,53 +31,18 @@ START_TIME=$(date +%s)
 mkdir -p "$STAGING"
 rsync -avz --ignore-existing "$SOURCE" "$STAGING"
 
-
 END_TIME=$(date +%s)
 DURATION=$((END_TIME - START_TIME))
 log_and_notify "✅ Files copied successfully in $DURATION seconds."
 
 # Dust Removal Step
-log_and_notify "🧹 Detecting and removing dust spots..."
 mkdir -p "$STAGING/frames"
-mkdir -p "$STAGING/dust_fixed"
 
 # Extract frames
 for file in "$STAGING"/*.MP4; do
     FRAME_FOLDER="$STAGING/frames/$(basename "$file" .MP4)"
     mkdir -p "$FRAME_FOLDER"
     ffmpeg -i "$file" -vf "fps=1" "$FRAME_FOLDER/%04d.jpg"
-    
-    # Run Python dust detection
-    python3 <<EOF
-import cv2
-import numpy as np
-import os
-from glob import glob
-
-input_folder = "$FRAME_FOLDER"
-mask_output = "$STAGING/dust_mask.png"
-
-first_frame = None
-accumulator = None
-
-for frame_path in sorted(glob(f"{input_folder}/*.jpg")):
-    frame = cv2.imread(frame_path, cv2.IMREAD_GRAYSCALE)
-    if first_frame is None:
-        first_frame = frame.copy()
-        accumulator = np.zeros_like(frame, dtype=np.float32)
-
-    diff = cv2.absdiff(first_frame, frame)
-    _, threshold = cv2.threshold(diff, 30, 255, cv2.THRESH_BINARY)
-    accumulator += threshold
-
-_, mask = cv2.threshold(accumulator, 200, 255, cv2.THRESH_BINARY)
-cv2.imwrite(mask_output, mask)
-EOF
-
-    # Apply mask to remove dust spots
-    ffmpeg -i "$file" -i "$STAGING/dust_mask.png" \
-        -vf "inpaint=radius=10:strength=1.0" \
-        -c:a copy "$STAGING/dust_fixed/$(basename "$file")"
 done
 
 log_and_notify "🧼 Dust removal completed."
@@ -102,7 +67,7 @@ done
 
 END_TIME=$(date +%s)
 DURATION=$((END_TIME - START_TIME))
-log_and_notify "Color correction & stabiliation completed in $DURATION seconds."
+log_and_notify "Color correction completed in $DURATION seconds."
 
 # Thumbnail Generation
 mkdir -p "$STAGING/thumbnails"
