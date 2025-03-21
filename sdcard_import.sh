@@ -1,13 +1,22 @@
 #!/bin/bash
 
+### EDIT THESE FIELDS FOR CONFIGURATION
+
+# The folder in which your camera stores video files on your SD card
+SOURCE="/Volumes/Untitled/PRIVATE/M4ROOT/CLIP/"
+
+# Where you want the files stored
+STAGING="$HOME/Videos/$TIMESTAMP/staging/"
+
+# Log location
+LOGFILE="$HOME/Videos/$TIMESTAMP/sdcard_import.log"
+### DO NOT EDIT BELOW HERE
+
+
 echo "sdcard_import started"
 
 # Paths
 TIMESTAMP=$(date +%s)
-SOURCE="/Volumes/Untitled/PRIVATE/M4ROOT/CLIP/"
-STAGING="$HOME/Videos/$TIMESTAMP/staging/"
-DESTINATION="$HOME/Videos/Final/"
-LOGFILE="$HOME/Videos/$TIMESTAMP/sdcard_import.log"
 
 # Send macOS Notification
 send_notification() {
@@ -39,17 +48,23 @@ log_and_notify "✅ Files copied successfully in $DURATION seconds."
 mkdir -p "$STAGING/frames"
 
 # Extract frames
-for file in "$STAGING"/*.MP4; do
-    FRAME_FOLDER="$STAGING/frames/$(basename "$file" .MP4)"
-    mkdir -p "$FRAME_FOLDER"
-    ffmpeg -i "$file" -vf "fps=1" "$FRAME_FOLDER/%04d.jpg"
-done
+# for file in "$STAGING"/*.MP4; do
+#     FRAME_FOLDER="$STAGING/frames/$(basename "$file" .MP4)"
+#     mkdir -p "$FRAME_FOLDER"
+#     ffmpeg -i "$file" -vf "fps=1" "$FRAME_FOLDER/%04d.jpg"
+    
+#     # Run Python dust detection
+#     # ffmpeg -i "$file" -vf "removelogo=$file-dust_mask.png" "$STAGING/dust_fixed/$file"
+# done
 
-log_and_notify "🧼 Dust removal completed."
+# log_and_notify "🧼 Dust removal completed."
 
 START_TIME=$(date +%s)
 mkdir -p "$STAGING/color_corrected"
-for file in "$STAGING"dust_fixed/*.MP4; do
+log_and_notify "Starting color-correction"
+# re-enable once dust-fixing capabilities are enabled
+# for file in "$STAGING"dust_fixed/*.MP4; do
+for file in "$STAGING"/*.MP4; do
     # Color Correction with Parallel
     mkdir -p "$STAGING/color_corrected"
     find "$STAGING"dust_fixed/ -maxdepth 1 -name "*.MP4" | parallel --bar -j "$(sysctl -n hw.ncpu)" \
@@ -62,7 +77,6 @@ for file in "$STAGING"dust_fixed/*.MP4; do
     # find "$STAGING/color_corrected/" -maxdepth 1 -name "*.MP4" | parallel --bar -j "$(sysctl -n hw.ncpu)" \
     #     'ffmpeg -i {} -vf vidstabdetect=shakiness=10:accuracy=15 -f null - && \
     #     ffmpeg -i {} -vf removegrain=10,eq=brightness=0.02:saturation=1.1,vidstabtransform=smoothing=30:zoom=0.9 "$STAGING/stabilized/{/}"'
-
 done
 
 END_TIME=$(date +%s)
@@ -70,12 +84,12 @@ DURATION=$((END_TIME - START_TIME))
 log_and_notify "Color correction completed in $DURATION seconds."
 
 # Thumbnail Generation
-mkdir -p "$STAGING/thumbnails"
-for file in "$STAGING/color_corrected/"*.MP4; do
-    ffmpeg -i "$file" -ss 00:00:05 -vframes 1 "$STAGING/thumbnails/$(basename "$file" .MP4).jpg"
-done
+# mkdir -p "$STAGING/thumbnails"
+# for file in "$STAGING/color_corrected/"*.MP4; do
+#     ffmpeg -i "$file" -ss 00:00:05 -vframes 1 "$STAGING/thumbnails/$(basename "$file" .MP4).jpg"
+# done
 
-log_and_notify "🖼️ Thumbnails generated."
+# log_and_notify "🖼️ Thumbnails generated."
 
 # File Size Summary
 FINAL_SIZE=$(du -sh "$STAGING" | cut -f1)
